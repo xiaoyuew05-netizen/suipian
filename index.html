@@ -93,6 +93,53 @@
   .swipe .badge.bu{left:50%;transform:translateX(-50%);background:rgba(255,180,84,.16);color:#ffc46b;border:2px solid rgba(255,180,84,.5)}
   .hintswipe{text-align:center;color:var(--dim);font-size:13px;margin-top:12px;letter-spacing:1px}
 </style>
+<style>
+  /* ===== 纸感浅色主题（B） ===== */
+  :root{
+    --bg:#f6f2ea; --card:#fffdf9; --card2:#ffffff; --line:#e5ddcf;
+    --fg:#231f1a; --dim:#8b8378; --accent:#b4552d;
+    --ok:#2f7d5a; --warn:#9a7b2e; --bad:#c2412f;
+  }
+  body{background:var(--bg);color:var(--fg)}
+  header h1{font-family:Georgia,"Songti SC","SimSun",serif;letter-spacing:1px}
+  header .sub{color:#9a9286}
+  .tabbar{background:rgba(246,242,234,.96);border-top:1px solid var(--line)}
+  .tabbar button{color:#9a9286}
+  .tabbar button.on{color:var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 4px 14px rgba(120,100,70,.06)}
+  .btn{background:#fffdf9;border:1px solid var(--line);border-radius:9px;color:var(--fg)}
+  .btn.primary{background:#231f1a;border-color:#231f1a;color:#f8f4ec}
+  input[type=text],textarea,select{background:#fffdf9;border:1px solid var(--line);color:var(--fg);border-radius:8px}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+  .stat div{background:var(--card);border:1px solid var(--line);border-radius:10px}
+  .stat b{color:var(--accent);font-family:Georgia,serif}
+  .stat span{color:#9a9286}
+  .chip{background:#f0e9dc;color:#7a7164}
+  .cardlist .item{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 3px 10px rgba(120,100,70,.05)}
+  .qbox{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:26px 22px;
+    box-shadow:0 8px 24px rgba(120,100,70,.10)}
+  .qbox h2{font-family:Georgia,"Songti SC","SimSun",serif;font-size:28px;color:#1a1713;letter-spacing:.5px}
+  .qbox .domain{color:#a9998a;letter-spacing:2px;font-size:11px}
+  .qimg{background:#f5efe3;border:1px solid var(--line)}
+  .answer{border-top:1px dashed var(--line)}
+  .answer .core{color:#1a1713;font-weight:700;font-family:Georgia,"Songti SC",serif}
+  .answer .detail{color:#4a453d}
+  .answer .eg{color:#8a6a1f}
+  .grades button{background:#fffdf9;border:1px solid var(--line);color:#5c554b;border-radius:9px}
+  .grades button.g0{border-color:#e2c9c3;color:var(--bad)}
+  .grades button.g1{border-color:#e4d8bd;color:var(--warn)}
+  .grades button.g2{background:#231f1a;border-color:#231f1a;color:#f8f4ec}
+  .empty{color:#9a9286}
+  .toast{background:#231f1a;color:#f8f4ec;box-shadow:0 6px 20px rgba(60,45,25,.25)}
+  .progress{background:#e8dfd0}
+  .progress i{background:var(--accent)}
+  .swipe .badge.bl{background:rgba(194,65,47,.12);color:#c2412f;border-color:rgba(194,65,47,.55)}
+  .swipe .badge.br{background:rgba(47,125,90,.12);color:#2f7d5a;border-color:rgba(47,125,90,.55)}
+  .swipe .badge.bu{background:rgba(154,123,46,.14);color:#8a6a1f;border-color:rgba(154,123,46,.55)}
+  .hint,.hintswipe,label{color:#9a9286}
+</style>
 </head>
 <body>
 <div id="app">
