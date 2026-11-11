@@ -501,17 +501,32 @@ window.checkUpdates=async function(manual){
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
     const arr=Array.isArray(d)? d : (d.cards||[]);
-    const have=new Set(CARDS.map(c=>c.id));
-    let n=0, seen=new Set();
+    const byId=new Map(CARDS.map(c=>[c.id,c]));
+    let n=0,upd=0, seen=new Set();
     for(const c of arr){
       if(!c.id) c.id='feed'+Math.random().toString(36).slice(2,9);
-      if(have.has(c.id)||seen.has(c.id)) continue;
-      seen.add(c.id); await storePut(c); n++;
+      if(seen.has(c.id)) continue;
+      seen.add(c.id);
+      const old=byId.get(c.id);
+      if(old){
+        // 已有的卡：只补空缺字段（图片/解释/例子/标签），绝不覆盖学习记录
+        let ch=false;
+        ['img','detail','example'].forEach(k=>{ if(!old[k] && c[k]){ old[k]=c[k]; ch=true } });
+        if((!old.tags||!old.tags.length) && c.tags && c.tags.length){ old.tags=c.tags; ch=true }
+        if(ch){ await storePut(old); upd++ }
+        continue;
+      }
+      await storePut(c); n++;
     }
     await reload(); setMeta({lastFeed:Date.now()});
     if(tab==='set') { renderSet(); renderLastChk(); }
-    if(manual||n) toast(n? ('新增 '+n+' 张卡片'):'已经是最新的');
-    return n;
+    if(manual||n||upd){
+      const parts=[];
+      if(n) parts.push('新增 '+n+' 张');
+      if(upd) parts.push('补充 '+upd+' 张');
+      toast(parts.length? parts.join('，') : '已经是最新的');
+    }
+    return n+upd;
   }catch(e){
     if(manual) toast('获取失败：检查网络或稍后再试');
     return 0;
