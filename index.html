@@ -421,6 +421,12 @@ function renderSet(){
       <div class="hint">3 张 ≈ 5 分钟（含复习）</div>
     </div>
     <div class="card">
+      <div style="font-size:15px;margin-bottom:6px">内容更新</div>
+      <div style="color:var(--dim);font-size:13px;margin-bottom:10px">上次检查：<span id="lastchk">—</span></div>
+      <button class="btn primary" onclick="checkUpdates(true)">检查新卡片</button>
+      <div class="hint">从云端拉取最新卡片包，只添加你还没有的，不会覆盖已有学习记录</div>
+    </div>
+    <div class="card">
       <div style="font-size:15px;margin-bottom:10px">数据</div>
       <button class="btn" onclick="exportJSON()">导出备份（JSON，含图片）</button>
       <div style="height:10px"></div>
@@ -442,6 +448,7 @@ function renderSet(){
     </div>`;
   const imp=$('#imp');
   if(imp) imp.onchange=importJSON;
+  renderLastChk();
 }
 window.setDaily=v=>{ setMeta({dailyNew:+v}); toast('已设置为每天 '+v+' 张') };
 window.exportJSON=()=>{
@@ -478,6 +485,41 @@ window.clearAll=async()=>{
   await storeClear(); await reload(); toast('已清空'); go('today');
 };
 
+/* ================= 云端内容更新 ================= */
+const FEED='cards.json';
+function renderLastChk(){
+  const el=document.getElementById('lastchk');
+  if(!el) return;
+  const t=meta().lastFeed;
+  el.textContent = t? new Date(t).toLocaleString('zh-CN') : '还没检查过';
+}
+window.checkUpdates=async function(manual){
+  const btn=(typeof event!=='undefined' && event && event.target && event.target.tagName==='BUTTON')? event.target : null;
+  if(btn){ btn.disabled=true; btn.textContent='检查中…' }
+  try{
+    const r=await fetch(FEED+'?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const arr=Array.isArray(d)? d : (d.cards||[]);
+    const have=new Set(CARDS.map(c=>c.id));
+    let n=0, seen=new Set();
+    for(const c of arr){
+      if(!c.id) c.id='feed'+Math.random().toString(36).slice(2,9);
+      if(have.has(c.id)||seen.has(c.id)) continue;
+      seen.add(c.id); await storePut(c); n++;
+    }
+    await reload(); setMeta({lastFeed:Date.now()});
+    if(tab==='set') { renderSet(); renderLastChk(); }
+    if(manual||n) toast(n? ('新增 '+n+' 张卡片'):'已经是最新的');
+    return n;
+  }catch(e){
+    if(manual) toast('获取失败：检查网络或稍后再试');
+    return 0;
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='检查新卡片' }
+  }
+};
+
 /* ================= 渲染入口 ================= */
 function render(){
   headerSub();
@@ -493,6 +535,10 @@ function render(){
   try{ await idbOpen(); idbOK=true }catch(e){ idbOK=false }
   await reload();
   render();
+  // 每天首次打开自动检查云端新卡片
+  if(location.protocol.indexOf('http')===0 && Date.now()-(meta().lastFeed||0) > 86400000){
+    checkUpdates(false);
+  }
 })();
 </script>
 </body>
